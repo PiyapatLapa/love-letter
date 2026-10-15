@@ -1,0 +1,97 @@
+
+<div class="choice-area" id="choiceArea">
+  <button id="yesBtn">ลองคุยกันดู ❤️</button>
+  <button id="noBtn">ไม่เอา 😏</button>
+</div>
+
+<style>
+.choice-area {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  min-height: 180px;
+  overflow: hidden;
+}
+
+.choice-area button {
+  padding: 12px 18px;
+  border-radius: 24px;
+  border: 1px solid #793d4b;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#yesBtn {
+  background: #793d4b;
+  color: white;
+}
+
+#noBtn {
+  background: #fffaf4;
+  color: #793d4b;
+  transition: left .18s ease, top .18s ease;
+}
+
+#noBtn.running {
+  position: absolute;
+}
+</style>
+
+<script>
+const area = document.getElementById("choiceArea");
+const noBtn = document.getElementById("noBtn");
+
+let stage = 0;
+let count = 0;
+let lastMove = 0;
+
+function moveButton() {
+  const now = Date.now();
+
+  // ป้องกันมือถือเรียกเหตุการณ์ซ้ำติดกัน
+  if (now - lastMove < 180) return;
+  lastMove = now;
+
+  noBtn.classList.add("running");
+
+  const maxX = Math.max(0, area.clientWidth - noBtn.offsetWidth);
+  const maxY = Math.max(0, area.clientHeight - noBtn.offsetHeight);
+
+  noBtn.style.left = Math.random() * maxX + "px";
+  noBtn.style.top = Math.random() * maxY + "px";
+
+  count++;
+
+  if (stage === 0 && count >= 20) {
+    stage = 1;
+    count = 0;
+    noBtn.textContent = "ยังไม่เอา! 😂";
+  } else if (stage === 1 && count >= 10) {
+    stage = 2;
+    count = 0;
+    noBtn.textContent = "ไม่จริง ๆ 😭";
+  } else if (stage === 2 && count >= 3) {
+    noBtn.removeEventListener("pointerenter", onHover);
+    noBtn.removeEventListener("pointerdown", onTouch);
+    noBtn.textContent = "โอเค เราเคารพคำตอบนะ ❤️";
+    noBtn.style.position = "static";
+    noBtn.classList.remove("running");
+  }
+}
+
+function onHover(event) {
+  if (event.pointerType === "mouse") moveButton();
+}
+
+function onTouch(event) {
+  if (event.pointerType === "touch") {
+    event.preventDefault();
+    moveButton();
+  }
+}
+
+noBtn.addEventListener("pointerenter", onHover);
+noBtn.addEventListener("pointerdown", onTouch);
+</script>
