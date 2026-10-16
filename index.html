@@ -99,4 +99,343 @@ button.secondary { background:#ead0d5; color:var(--wine); }
 }
 #status { min-height:30px; color:var(--wine); font-weight: bold; }
 
-/* โครงสร้างกล่องคำถามเชิงลึก */
+.scenario-box {
+  background: #ffffff;
+  border-left: 4px solid var(--rose);
+  padding: 14px 18px;
+  margin: 15px 0 20px;
+  text-align: left;
+  border-radius: 0 12px 12px 0;
+  font-size: 14.5px;
+  color: #643949;
+}
+.quiz-option {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 10px auto;
+  background: #fff;
+  border: 1px solid var(--rose);
+  color: var(--wine);
+  font-size: 15px;
+  padding: 12px 18px;
+  line-height: 1.5;
+  text-align: left;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.quiz-option:hover {
+  background: var(--wine);
+  color: white;
+}
+
+.checklist-box {
+  text-align: left;
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  margin: 15px 0;
+  border: 1px solid #e8cbd0;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  cursor: pointer;
+  font-size: 14.5px;
+}
+.check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wine);
+  cursor: pointer;
+}
+
+.sparkle {
+  position:fixed; pointer-events:none; z-index:99;
+  animation:floatUp 1s ease-out forwards;
+}
+@keyframes floatUp {
+  from {opacity:1;transform:translateY(0) scale(.6)}
+  to {opacity:0;transform:translateY(-90px) scale(1.5)}
+}
+footer { margin-top:35px; font-size:12px; opacity:.65; }
+</style>
+</head>
+<body>
+<main>
+  <p>♡ a little letter for someone special ♡</p>
+  <h1>ถึงคนคนหนึ่ง</h1>
+  <p>มีบางอย่างที่อยากบอก เลยทำเว็บนี้ขึ้นมา</p>
+
+  <div class="envelope-wrap">
+    <div class="envelope" id="envelope" role="button" tabindex="0">
+      <div class="seal">♡</div>
+    </div>
+  </div>
+  <button id="openBtn">เปิดจดหมาย ♡</button>
+  <button class="secondary" id="musicBtn">♫ เพลง: ปิดอยู่</button>
+  <audio id="music" loop></audio>
+  <p class="small">แตะซองจดหมายเพื่อเปิดอ่าน</p>
+
+  <article class="letter" id="letter">
+    <h2>Dear you, ♡</h2>
+    <p id="letterText">[เขียนคำทักทายของคุณตรงนี้]
+
+[เขียนสิ่งที่คุณอยากบอกเขาด้วยคำพูดของตัวเอง]
+
+[เขียนความรู้สึกหรือสิ่งที่คุณได้เรียนรู้จากที่ผ่านมา]
+
+[เขียนว่าคุณอยากสร้างอนาคตแบบไหน หากเขาอยากลองเปิดโอกาสให้กันอีกครั้ง]
+
+ไม่ว่าคำตอบจะเป็นอย่างไร เราก็อยากเคารพความรู้สึกของคุณ
+
+ด้วยความรู้สึกดี ๆ ♡</p>
+  </article>
+
+  <!-- ขั้นตอนที่ 1 -->
+  <section class="section" id="step1">
+    <h2>มีคำถามอยากถามหน่อย ♡</h2>
+    <p>ถ้าคุณอ่านมาถึงตรงนี้แล้ว...</p>
+    <p>คุณอยากลองเปิดโอกาสให้เราได้รู้จักและเรียนรู้กันใหม่ไหม?</p>
+    <button id="yesBtn">ลองดูกัน ♡</button>
+    <button class="secondary" id="noBtn">ยังไม่แน่ใจ</button>
+    <p id="status"></p>
+  </section>
+
+  <!-- ขั้นตอนที่ 2: คำถามเชิงลึก -->
+  <section class="section" id="step2" style="display: none;">
+    <p id="quizProgress" style="font-size:13px; color:var(--rose); font-weight:bold;"></p>
+    <h2 id="quizQuestion" style="font-size: 20px;"></h2>
+    
+    <div class="scenario-box">
+      <strong style="color:var(--wine);">📖 กรณีศึกษา (Scenario):</strong><br>
+      <span id="scenarioText"></span>
+    </div>
+
+    <div id="quizOptions"></div>
+  </section>
+
+  <!-- ขั้นตอนที่ 2.5: เช็คชัวร์ 3 ติ๊ก -->
+  <section class="section" id="confirmSection" style="display: none;">
+    <h2>แน่ใจแล้วใช่ไหม? ♡</h2>
+    <p>พยายามไล่กดปุ่มจนเหนื่อยเลยใช่ไหม 5555<br>ช่วยติ๊กยืนยันความรู้สึกจริงๆ ให้ครบทั้ง 3 ข้อนะ:</p>
+    
+    <div class="checklist-box">
+      <label class="check-item">
+        <input type="checkbox" class="chk-sure">
+        <span>1. อ่านเนื้อหาในจดหมายทั้งหมดครบถ้วนแล้ว</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" class="chk-sure">
+        <span>2. ยืนยันว่ายังไม่พร้อมเปิดโอกาสให้ในตอนนี้</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox" class="chk-sure">
+        <span>3. ยืนยันคำตอบนี้และพร้อมส่งคำตอบ</span>
+      </label>
+    </div>
+
+    <button id="saveNoBtn" disabled>ยืนยันและส่งคำตอบ</button>
+  </section>
+
+  <!-- ขั้นตอนที่ 3: สรุปผล -->
+  <section class="section" id="step3" style="display: none;">
+    <h2 id="endingTitle"></h2>
+    <p id="endingText"></p>
+    <div id="summaryAnswers" style="text-align: left; background: #fff; padding: 18px; border-radius: 12px; margin: 18px 0; font-size: 14px; border: 1px solid #e8cbd0; line-height: 1.7;"></div>
+  </section>
+
+  <footer>made with care ♡</footer>
+</main>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const questions = [
+    {
+      q: "กรณีศึกษาที่ 1: เมื่อเกิดความไม่เข้าใจกัน",
+      scenario: "สมมติว่าวันหนึ่งเรามีความคิดเห็นไม่ตรงกันอย่างรุนแรง หรือต่างฝ่ายต่างเหนื่อยล้าจากเรื่องข้างนอก...",
+      options: [
+        "ขอเวลาถอยไปจัดการอารมณ์ตนเองสักพัก แล้วค่อยกลับมาเปิดใจคุยกันด้วยเหตุผล",
+        "เปิดใจพูดคุยปรับความเข้าใจกันทันที ไม่ปล่อยให้ข้ามคืนเพราะไม่อยากให้สะสม",
+        "เน้นรับฟังความรู้สึกอีกฝ่ายก่อน โดยยังไม่ต้องรีบหาคนถูกผิด"
+      ]
+    },
+    {
+      q: "กรณีศึกษาที่ 2: 'พื้นที่ส่วนตัว' กับ 'เวลาร่วมกัน'",
+      scenario: "ถ้าเริ่มกลับมาเรียนรู้กันอีกครั้ง ทั้งคู่อาจมีงาน หรือภาระส่วนตัวจนเวลาไม่ตรงกัน...",
+      options: [
+        "เน้นคุณภาพเวลา (Quality Time) แม้เจอกันน้อยแต่ทุกครั้งต้องมีความหมาย",
+        "อัปเดตชีวิตประจำวันกันเรื่อยๆ เพื่อให้รู้สึกว่าเป็นส่วนหนึ่งในชีวิตกันเสมอ",
+        "ต่างฝ่ายต่างใช้ชีวิตของตัวเองเต็มที่ มีสเปซให้กันอย่างผ่อนคลาย"
+      ]
+    },
+    {
+      q: "กรณีศึกษาที่ 3: การสนับสนุนเป้าหมายชีวิต",
+      scenario: "หากในอนาคตฝ่ายใดฝ่ายหนึ่งต้องตัดสินใจครั้งใหญ่ในชีวิตที่กระทบความสัมพันธ์...",
+      options: [
+        "พร้อมสนับสนุนความฝันของกันและกันเต็มที่ ช่วยกันหาทางออกร่วมกัน",
+        "เน้นเปิดใจคุยถึงอนาคตยาวๆ ร่วมกัน ว่าเป้าหมายยังไปทางเดียวกันไหม",
+        "ค่อยๆ ปรับตัวไปตามสถานการณ์จริง ยึดความสบายใจของทั้งคู่เป็นหลัก"
+      ]
+    }
+  ];
+
+  let currentQ = 0;
+  let answers = [];
+
+  const envelope = document.getElementById('envelope');
+  const letter = document.getElementById('letter');
+  const openBtn = document.getElementById('openBtn');
+
+  function openLetter() {
+    envelope.classList.add('open');
+    letter.classList.add('show');
+    openBtn.textContent = 'เปิดจดหมายแล้ว ♡';
+  }
+  if (envelope) envelope.onclick = openLetter;
+  if (openBtn) openBtn.onclick = openLetter;
+
+  const musicBtn = document.getElementById('musicBtn');
+  const music = document.getElementById('music');
+  if (musicBtn) {
+    musicBtn.onclick = async () => {
+      if (!music.src) {
+        document.getElementById('status').textContent = '♫ ใส่ไฟล์เพลงใน music.src ได้เลย';
+        return;
+      }
+      if (music.paused) {
+        try {
+          await music.play();
+          musicBtn.textContent = '♫ เพลง: เปิดอยู่';
+        } catch {
+          document.getElementById('status').textContent = 'แตะหน้าจอก่อนเปิดเพลงนะ';
+        }
+      } else {
+        music.pause();
+        musicBtn.textContent = '♫ เพลง: ปิดอยู่';
+      }
+    };
+  }
+
+  const noBtn = document.getElementById('noBtn');
+  let dodges = 0;
+
+  function moveNo(e) {
+    if (e) e.preventDefault();
+    dodges++;
+
+    if (dodges >= 10) {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('confirmSection').style.display = 'block';
+      return;
+    }
+
+    if (dodges >= 6) {
+      document.getElementById('status').textContent = 'เหลืออีกนิดเดียวเองนะะะ 😂';
+    } else if (dodges >= 3) {
+      document.getElementById('status').textContent = 'ยังจะกดอีกเหรอครับบบ 5555';
+    } else {
+      document.getElementById('status').textContent = 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ!';
+    }
+
+    const x = (Math.random() - 0.5) * 180;
+    const y = (Math.random() - 0.5) * 80;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  if (noBtn) {
+    noBtn.addEventListener('click', moveNo);
+    noBtn.addEventListener('mouseover', moveNo);
+  }
+
+  const checkBoxes = document.querySelectorAll('.chk-sure');
+  const saveNoBtn = document.getElementById('saveNoBtn');
+
+  checkBoxes.forEach(chk => {
+    chk.onchange = () => {
+      const allChecked = Array.from(checkBoxes).every(c => c.checked);
+      saveNoBtn.disabled = !allChecked;
+    };
+  });
+
+  if (saveNoBtn) {
+    saveNoBtn.onclick = () => {
+      document.getElementById('confirmSection').style.display = 'none';
+      document.getElementById('step3').style.display = 'block';
+      document.getElementById('endingTitle').textContent = 'ขอบคุณที่ให้เวลาอ่านนะ ♡';
+      document.getElementById('endingText').textContent = 'โดนปุ่มแกล้งวนจนเหนื่อยเลยใช่ไหม 555 เรารับทราบและเคารพการตัดสินใจของคุณครับ ♡';
+      document.getElementById('summaryAnswers').style.display = 'none';
+    };
+  }
+
+  const yesBtn = document.getElementById('yesBtn');
+  if (yesBtn) {
+    yesBtn.onclick = () => {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
+      currentQ = 0;
+      answers = [];
+      renderQuestion();
+    };
+  }
+
+  function renderQuestion() {
+    const item = questions[currentQ];
+    document.getElementById('quizProgress').textContent = `คำถามข้อที่ ${currentQ + 1} / ${questions.length}`;
+    document.getElementById('quizQuestion').textContent = item.q;
+    document.getElementById('scenarioText').textContent = item.scenario;
+    
+    const optsDiv = document.getElementById('quizOptions');
+    optsDiv.innerHTML = '';
+
+    item.options.forEach(opt => {
+      const b = document.createElement('button');
+      b.className = 'quiz-option';
+      b.textContent = '• ' + opt;
+      b.onclick = () => {
+        answers.push({ q: item.q, a: opt });
+        currentQ++;
+        if (currentQ < questions.length) {
+          renderQuestion();
+        } else {
+          showYesResult();
+        }
+      };
+      optsDiv.appendChild(b);
+    });
+  }
+
+  function showYesResult() {
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'block';
+    document.getElementById('endingTitle').textContent = 'ขอบคุณสำหรับทุกคำตอบนะ ♡';
+    document.getElementById('endingText').textContent = 'แคปรูปสรุปคำตอบด้านล่างนี้ส่งมาให้เราในแชทได้เลยนะ:';
+    
+    const sum = document.getElementById('summaryAnswers');
+    sum.style.display = 'block';
+    sum.innerHTML = answers.map((item, i) => `
+      <div style="margin-bottom:12px;">
+        <strong style="color:var(--wine);">${i+1}. ${item.q}</strong><br>
+        <span style="color:var(--rose); font-weight:bold;">↳ ตอบ: ${item.a}</span>
+      </div>
+    `).join('');
+  }
+
+  document.onpointerdown = e => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+    const s = document.createElement('span');
+    s.className = 'sparkle';
+    s.textContent = ['✦','♡','✧','⋆'][Math.floor(Math.random()*4)];
+    s.style.left = e.clientX + 'px';
+    s.style.top = e.clientY + 'px';
+    s.style.fontSize = (14 + Math.random()*16) + 'px';
+    s.style.color = '#a54e6a';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1100);
+  };
+});
+</script>
+</body>
+</html>
