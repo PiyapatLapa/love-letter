@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -18,7 +17,7 @@ body {
   margin:0; min-height:100vh;
   background:linear-gradient(145deg,var(--cream),var(--pink));
   color:var(--ink);
-  font-family:Georgia,"Tahoma",serif;
+  font-family:Georgia, "Tahoma", serif;
   text-align:center;
   overflow-x:hidden;
 }
@@ -35,10 +34,11 @@ button {
   padding:12px 20px; margin:6px;
   background:var(--wine); color:white;
   font-size:15px; cursor:pointer;
-  transition:transform .2s;
+  transition:transform .2s ease;
 }
 button:active { transform:scale(.96); }
 button.secondary { background:#ead0d5; color:var(--wine); }
+
 .envelope-wrap { perspective:900px; margin:35px auto; }
 .envelope {
   position:relative; width:min(100%,330px); height:205px;
@@ -64,9 +64,11 @@ button.secondary { background:#ead0d5; color:var(--wine); }
   width:48px;height:48px;border-radius:50%;
   display:grid;place-items:center;
   background:var(--wine);color:white;font-size:23px;
+  transition:opacity .4s ease;
 }
 .envelope.open:before { transform:rotateX(180deg); }
 .envelope.open .seal { opacity:0; }
+
 .letter {
   display:none; position:relative; z-index:2;
   background:#fffdf8; padding:25px 22px;
@@ -77,19 +79,34 @@ button.secondary { background:#ead0d5; color:var(--wine); }
 .letter.show { display:block; }
 .letter h2 { text-align:center; color:var(--wine); }
 #letterText { white-space:pre-wrap; }
+
 @keyframes appear {
   from {opacity:0;transform:translateY(15px)}
   to {opacity:1;transform:translateY(0)}
 }
+
 .section {
   margin-top:25px; padding:22px;
   border:1px solid #e7cbd1; border-radius:18px;
   background:#fff9f3b8;
 }
-#noBtn { background:#d7a3ae; color:#54283a; }
-#status { min-height:30px; color:var(--wine); }
+#choiceArea {
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+#noBtn { 
+  background:#d7a3ae; color:#54283a; 
+  position: relative;
+  transition: transform 0.2s ease-out;
+}
+#status { min-height:30px; color:var(--wine); font-weight: bold; }
 #ending { display:none; }
 #ending.show { display:block; animation:appear .8s; }
+
 .sparkle {
   position:fixed; pointer-events:none; z-index:99;
   animation:floatUp 1s ease-out forwards;
@@ -108,8 +125,7 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
   <p>มีบางอย่างที่อยากบอก เลยทำเว็บนี้ขึ้นมา</p>
 
   <div class="envelope-wrap">
-    <div class="envelope" id="envelope" role="button"
-         tabindex="0" aria-label="เปิดซองจดหมาย">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="เปิดซองจดหมาย">
       <div class="seal">♡</div>
     </div>
   </div>
@@ -178,8 +194,7 @@ envelope.addEventListener('keydown', e => {
   }
 });
 
-// ใส่ไฟล์เพลงที่คุณมีสิทธิ์ใช้งาน แล้วเปลี่ยนชื่อไฟล์ตรงนี้
-// ตัวอย่าง: music.src = "piano.mp3";
+// ใส่ลิงก์ไฟล์เพลงตรงนี้ได้เลย เช่น music.src = "piano.mp3";
 musicBtn.addEventListener('click', async () => {
   if (!music.src) {
     status.textContent = '♫ อยากใส่เพลง? เพิ่มไฟล์เพลงแล้วกำหนด music.src ในโค้ดได้เลย';
@@ -198,7 +213,7 @@ musicBtn.addEventListener('click', async () => {
   }
 });
 
-// ประกายดาวเมื่อแตะหน้าจอ
+// เอฟเฟกต์ประกายดาว
 document.addEventListener('pointerdown', e => {
   const s = document.createElement('span');
   s.className = 'sparkle';
@@ -211,20 +226,19 @@ document.addEventListener('pointerdown', e => {
   setTimeout(() => s.remove(), 1100);
 });
 
-// ปุ่มหนี: 20 -> 10 -> 3 -> ฉากจบกวน ๆ
+// ระบบปุ่มหนี
 let dodges = 0;
-let stage = 20;
 const messages = {
-  20: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
+  1: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
   10: 'ยังจะกดอีกเหรอครับบบ 😂',
-  3: 'เหลืออีกนิดเดียวเองนะะะ',
+  25: 'เหลืออีกนิดเดียวเองนะะะ',
 };
-function moveNoButton() {
-  if (ending.classList.contains('show')) return;
-  dodges++;
 
-  if (dodges === 20) stage = 10;
-  if (dodges === 30) stage = 3;
+function moveNoButton(e) {
+  if (ending.classList.contains('show')) return;
+  if (e) e.preventDefault(); // ป้องกันการคลิกจริงบนมือถือ
+
+  dodges++;
 
   if (dodges >= 33) {
     ending.classList.add('show');
@@ -236,19 +250,18 @@ function moveNoButton() {
     return;
   }
 
-  status.textContent =
-    dodges < 20 ? messages[20] :
-    dodges < 30 ? messages[10] : messages[3];
+  if (dodges >= 25) status.textContent = messages[25];
+  else if (dodges >= 10) status.textContent = messages[10];
+  else status.textContent = messages[1];
 
-  const area = document.getElementById('choiceArea');
-  const maxX = Math.max(0, Math.min(150, area.clientWidth / 2));
-  const maxY = 70;
-  const x = (Math.random() * 2 - 1) * maxX;
-  const y = (Math.random() * 2 - 1) * maxY;
-  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  const offsetX = (Math.random() - 0.5) * 220;
+  const offsetY = (Math.random() - 0.5) * 100;
+  noBtn.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 }
-noBtn.addEventListener('pointerenter', moveNoButton);
-noBtn.addEventListener('click', moveNoButton);
+
+// รองรับทั้ง Mobile และ Desktop
+noBtn.addEventListener('mouseover', moveNoButton);
+noBtn.addEventListener('touchstart', moveNoButton, { passive: false });
 
 yesBtn.addEventListener('click', () => {
   ending.classList.add('show');
@@ -262,11 +275,13 @@ yesBtn.addEventListener('click', () => {
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   dodges = 0;
-  stage = 20;
   ending.classList.remove('show');
   noBtn.style.visibility = 'visible';
   noBtn.style.transform = 'none';
   status.textContent = '';
+  envelope.classList.remove('open');
+  letter.classList.remove('show');
+  openBtn.textContent = 'เปิดจดหมาย ♡';
 });
 </script>
 </body>
