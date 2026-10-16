@@ -34,7 +34,7 @@ button {
   padding:12px 20px; margin:6px;
   background:var(--wine); color:white;
   font-size:15px; cursor:pointer;
-  transition:transform .2s ease, background .2s ease;
+  transition:transform .2s ease;
 }
 button:active { transform:scale(.96); }
 button.secondary { background:#ead0d5; color:var(--wine); }
@@ -74,43 +74,25 @@ button.secondary { background:#ead0d5; color:var(--wine); }
   background:#fffdf8; padding:25px 22px;
   margin:18px auto; border:1px solid #e8cbd0;
   border-radius:12px; box-shadow:0 10px 25px #762e4512;
-  text-align:left; animation:appear .8s ease;
+  text-align:left;
 }
 .letter.show { display:block; }
 .letter h2 { text-align:center; color:var(--wine); }
 #letterText { white-space:pre-wrap; }
-
-@keyframes appear {
-  from {opacity:0;transform:translateY(15px)}
-  to {opacity:1;transform:translateY(0)}
-}
 
 .section {
   margin-top:25px; padding:22px;
   border:1px solid #e7cbd1; border-radius:18px;
   background:#fff9f3b8;
 }
-#choiceArea {
-  position: relative;
-  min-height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
+
 #noBtn { 
   background:#d7a3ae; color:#54283a; 
   position: relative;
-  transition: transform 0.2s ease-out;
 }
 #status { min-height:30px; color:var(--wine); font-weight: bold; }
 
-/* โครงสร้างส่วนคำถามเชิงลึก (Deep Quiz Section) */
-#quizSection {
-  display: none;
-  text-align: center;
-  animation: appear .6s ease;
-}
+/* โครงสร้างกล่องคำถามเชิงลึก */
 .scenario-box {
   background: #ffffff;
   border-left: 4px solid var(--rose);
@@ -120,13 +102,6 @@ button.secondary { background:#ead0d5; color:var(--wine); }
   border-radius: 0 12px 12px 0;
   font-size: 14.5px;
   color: #643949;
-  box-shadow: 0 4px 12px #762e450a;
-}
-.scenario-title {
-  font-weight: bold;
-  color: var(--wine);
-  margin-bottom: 6px;
-  display: block;
 }
 .quiz-option {
   display: block;
@@ -141,19 +116,12 @@ button.secondary { background:#ead0d5; color:var(--wine); }
   line-height: 1.5;
   text-align: left;
   border-radius: 20px;
+  cursor: pointer;
 }
 .quiz-option:hover {
   background: var(--wine);
   color: white;
 }
-.progress-bar {
-  font-size: 13px;
-  color: var(--rose);
-  margin-bottom: 12px;
-  font-weight: bold;
-}
-
-#ending { display:none; }
 
 .sparkle {
   position:fixed; pointer-events:none; z-index:99;
@@ -173,7 +141,7 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
   <p>มีบางอย่างที่อยากบอก เลยทำเว็บนี้ขึ้นมา</p>
 
   <div class="envelope-wrap">
-    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="เปิดซองจดหมาย">
+    <div class="envelope" id="envelope" role="button" tabindex="0">
       <div class="seal">♡</div>
     </div>
   </div>
@@ -197,33 +165,31 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
 ด้วยความรู้สึกดี ๆ ♡</p>
   </article>
 
-  <!-- ส่วนคำถามแรกเริ่ม -->
-  <section class="section" id="initialSection">
+  <!-- ส่วนถามครั้งแรก -->
+  <section class="section" id="step1">
     <h2>มีคำถามอยากถามหน่อย ♡</h2>
     <p>ถ้าคุณอ่านมาถึงตรงนี้แล้ว...</p>
     <p>คุณอยากลองเปิดโอกาสให้เราได้รู้จักและเรียนรู้กันใหม่ไหม?</p>
-    <div id="choiceArea">
-      <button id="yesBtn">ลองดูกัน ♡</button>
-      <button class="secondary" id="noBtn">ยังไม่แน่ใจ</button>
-    </div>
-    <p id="status" aria-live="polite"></p>
+    <button id="yesBtn">ลองดูกัน ♡</button>
+    <button class="secondary" id="noBtn">ยังไม่แน่ใจ</button>
+    <p id="status"></p>
   </section>
 
-  <!-- ส่วนคำถามตอบเชิงลึก (Deep Questions + Scenarios) -->
-  <section class="section" id="quizSection">
-    <div class="progress-bar" id="quizProgress">คำถามที่ 1 / 3</div>
-    <h2 id="quizQuestion" style="font-size: 20px;">หัวข้อคำถาม</h2>
+  <!-- ส่วนคำถามเชิงลึก -->
+  <section class="section" id="step2" style="display: none;">
+    <p id="quizProgress" style="font-size:13px; color:var(--rose); font-weight:bold;"></p>
+    <h2 id="quizQuestion" style="font-size: 20px;"></h2>
     
-    <div class="scenario-box" id="scenarioBox">
-      <span class="scenario-title">📖 กรณีศึกษา (Scenario):</span>
-      <span id="scenarioText">รายละเอียดสถานการณ์...</span>
+    <div class="scenario-box">
+      <strong style="color:var(--wine);">📖 กรณีศึกษา (Scenario):</strong><br>
+      <span id="scenarioText"></span>
     </div>
 
     <div id="quizOptions"></div>
   </section>
 
   <!-- ส่วนฉากจบ -->
-  <section class="section" id="ending">
+  <section class="section" id="step3" style="display: none;">
     <h2 id="endingTitle"></h2>
     <p id="endingText"></p>
     <div id="summaryAnswers" style="text-align: left; background: #fff; padding: 18px; border-radius: 12px; margin: 18px 0; font-size: 14px; border: 1px solid #e8cbd0; line-height: 1.7;"></div>
@@ -234,211 +200,26 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
 </main>
 
 <script>
-const envelope = document.getElementById('envelope');
-const letter = document.getElementById('letter');
-const openBtn = document.getElementById('openBtn');
-const music = document.getElementById('music');
-const musicBtn = document.getElementById('musicBtn');
-const noBtn = document.getElementById('noBtn');
-const yesBtn = document.getElementById('yesBtn');
-const status = document.getElementById('status');
-const initialSection = document.getElementById('initialSection');
-const quizSection = document.getElementById('quizSection');
-const quizProgress = document.getElementById('quizProgress');
-const quizQuestion = document.getElementById('quizQuestion');
-const scenarioText = document.getElementById('scenarioText');
-const quizOptions = document.getElementById('quizOptions');
-const ending = document.getElementById('ending');
-const endingTitle = document.getElementById('endingTitle');
-const endingText = document.getElementById('endingText');
-const summaryAnswers = document.getElementById('summaryAnswers');
-
-// ชุดคำถามเชิงลึก (Deep Questions) + กรณีศึกษา (Scenarios)
+// คำถามเชิงลึกและกรณีศึกษา
 const questions = [
   {
-    q: "กรณีศึกษาที่ 1: เมื่อเกิดความไม่เข้าใจหรือทางความคิดไม่ตรงกัน",
-    scenario: "สมมติว่าวันหนึ่งเรามีความคิดเห็นไม่ตรงกันอย่างรุนแรงในเรื่องสำคัญ หรือต่างฝ่ายต่างรู้สึกเหนื่อยล้าจากเรื่องข้างนอก จนบรรยากาศเริ่มอึมครึม...",
+    q: "กรณีศึกษาที่ 1: เมื่อเกิดความไม่เข้าใจกัน",
+    scenario: "สมมติว่าวันหนึ่งเรามีความคิดเห็นไม่ตรงกันอย่างรุนแรง หรือต่างฝ่ายต่างเหนื่อยล้าจากเรื่องข้างนอก...",
     options: [
-      "ขอเวลาถอยไปจัดการอารมณ์ตนเองสักพัก แล้วค่อยกลับมาเปิดใจคุยกันตรงๆ ด้วยเหตุผล",
+      "ขอเวลาถอยไปจัดการอารมณ์ตนเองสักพัก แล้วค่อยกลับมาเปิดใจคุยกันด้วยเหตุผล",
       "เปิดใจพูดคุยปรับความเข้าใจกันทันที ไม่ปล่อยให้ข้ามคืนเพราะไม่อยากให้สะสม",
-      "เน้นรับฟังความรู้สึกอีกฝ่ายก่อน โดยยังไม่ต้องรีบหาคนถูกผิด เอาความรู้สึกตรงหน้าเป็นหลัก"
+      "เน้นรับฟังความรู้สึกอีกฝ่ายก่อน โดยยังไม่ต้องรีบหาคนถูกผิด"
     ]
   },
   {
-    q: "กรณีศึกษาที่ 2: สมดุลระหว่าง 'พื้นที่ส่วนตัว' กับ 'เวลาร่วมกัน'",
-    scenario: "ถ้าเราเริ่มกลับมาเรียนรู้กันอีกครั้ง ทั้งคู่อาจมีงาน มีภาระหน้าที่ หรือมีสังคมส่วนตัวที่ต้องให้เวลา จนเวลาว่างไม่ตรงกัน...",
+    q: "กรณีศึกษาที่ 2: 'พื้นที่ส่วนตัว' กับ 'เวลาร่วมกัน'",
+    scenario: "ถ้าเริ่มกลับมาเรียนรู้กันอีกครั้ง ทั้งคู่อาจมีงาน หรือภาระส่วนตัวจนเวลาไม่ตรงกัน...",
     options: [
-      "ให้ความสำคัญกับคุณภาพเวลา (Quality Time) แม้เจอกันน้อย แต่เวลาที่อยู่ด้วยกันต้องมีความหมาย",
-      "อัปเดตชีวิตประจำวันกันเรื่อยๆ (ส่งข้อความ/คอล) เพื่อให้รู้สึกว่าเป็นส่วนหนึ่งในชีวิตกันเสมอ",
-      "ต่างฝ่ายต่างใช้ชีวิตของตัวเองเต็มที่ มีสเปซให้กันอย่างผ่อนคลาย ไม่กดดันเรื่องเวลา"
+      "เน้นคุณภาพเวลา (Quality Time) แม้เจอกันน้อยแต่ทุกครั้งต้องมีความหมาย",
+      "อัปเดตชีวิตประจำวันกันเรื่อยๆ เพื่อให้รู้สึกว่าเป็นส่วนหนึ่งในชีวิตกันเสมอ",
+      "ต่างฝ่ายต่างใช้ชีวิตของตัวเองเต็มที่ มีสเปซให้กันอย่างผ่อนคลาย"
     ]
   },
   {
-    q: "กรณีศึกษาที่ 3: การเติบโตและการสนับสนุนเป้าหมายชีวิต",
-    scenario: "หากในอนาคตฝ่ายใดฝ่ายหนึ่งต้องตัดสินใจครั้งใหญ่ในชีวิต (เช่น เปลี่ยนสายงาน, เรียนต่อ, หรือย้ายที่อยู่) ซึ่งกระทบกับจังหวะความสัมพันธ์...",
-    options: [
-      "พร้อมสนับสนุนความฝันของกันและกันเต็มที่ โดยช่วยกันหาทางออกที่ปรับเข้าหากันได้มากที่สุด",
-      "เน้นเปิดใจคุยถึงอนาคตยาวๆ ร่วมกัน เพื่อดูว่าเป้าหมายยังเดินไปในทิศทางเดียวกันไหม",
-      "ค่อยๆ ปรับตัวไปตามสถานการณ์จริง โดยยึดความสบายใจและความก้าวหน้าของทั้งสองฝ่ายเป็นหลัก"
-    ]
-  }
-];
-
-let currentQuestion = 0;
-let userAnswers = [];
-
-function openLetter() {
-  envelope.classList.add('open');
-  letter.classList.add('show');
-  openBtn.textContent = 'เปิดจดหมายแล้ว ♡';
-}
-openBtn.addEventListener('click', openLetter);
-envelope.addEventListener('click', openLetter);
-envelope.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    openLetter();
-  }
-});
-
-musicBtn.addEventListener('click', async () => {
-  if (!music.src) {
-    status.textContent = '♫ อยากใส่เพลง? เพิ่มไฟล์เพลงแล้วกำหนด music.src ในโค้ดได้เลย';
-    return;
-  }
-  if (music.paused) {
-    try {
-      await music.play();
-      musicBtn.textContent = '♫ เพลง: เปิดอยู่';
-    } catch {
-      status.textContent = 'เบราว์เซอร์ยังไม่อนุญาตให้เล่นเพลง ลองแตะอีกครั้งนะ';
-    }
-  } else {
-    music.pause();
-    musicBtn.textContent = '♫ เพลง: ปิดอยู่';
-  }
-});
-
-// ประกายดาว
-document.addEventListener('pointerdown', e => {
-  const s = document.createElement('span');
-  s.className = 'sparkle';
-  s.textContent = ['✦','♡','✧','⋆'][Math.floor(Math.random()*4)];
-  s.style.left = e.clientX + 'px';
-  s.style.top = e.clientY + 'px';
-  s.style.fontSize = (14 + Math.random()*16) + 'px';
-  s.style.color = '#a54e6a';
-  document.body.appendChild(s);
-  setTimeout(() => s.remove(), 1100);
-});
-
-// ปุ่มหนี
-let dodges = 0;
-const messages = {
-  1: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
-  10: 'ยังจะกดอีกเหรอครับบบ 😂',
-  25: 'เหลืออีกนิดเดียวเองนะะะ',
-};
-
-function moveNoButton(e) {
-  if (ending.style.display === 'block') return;
-  if (e) e.preventDefault();
-
-  dodges++;
-
-  if (dodges >= 33) {
-    initialSection.style.display = 'none';
-    quizSection.style.display = 'none';
-    ending.style.display = 'block';
-    endingTitle.textContent = 'โดนปุ่มหลอกแล้ววว 😈';
-    endingText.textContent =
-      '555555 ปุ่มนี้กวนเล่นเฉย ๆ ครับ ไม่มีคำตอบไหนผิดนะ คุณเลือกตามความรู้สึกจริง ๆ ได้เลย ♡';
-    summaryAnswers.style.display = 'none';
-    return;
-  }
-
-  if (dodges >= 25) status.textContent = messages[25];
-  else if (dodges >= 10) status.textContent = messages[10];
-  else status.textContent = messages[1];
-
-  const offsetX = (Math.random() - 0.5) * 220;
-  const offsetY = (Math.random() - 0.5) * 100;
-  noBtn.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-}
-
-noBtn.addEventListener('mouseover', moveNoButton);
-noBtn.addEventListener('touchstart', moveNoButton, { passive: false });
-
-// เริ่มคำถามเมื่อกด "ลองดูกัน ♡"
-yesBtn.addEventListener('click', () => {
-  initialSection.style.display = 'none';
-  quizSection.style.display = 'block';
-  currentQuestion = 0;
-  userAnswers = [];
-  showQuestion();
-});
-
-function showQuestion() {
-  const qData = questions[currentQuestion];
-  quizProgress.textContent = `คำถามเชิงลึกข้อที่ ${currentQuestion + 1} / ${questions.length}`;
-  quizQuestion.textContent = qData.q;
-  scenarioText.textContent = qData.scenario;
-  quizOptions.innerHTML = '';
-
-  qData.options.forEach((optText) => {
-    const btn = document.createElement('button');
-    btn.className = 'quiz-option';
-    btn.textContent = `• ${optText}`;
-    btn.addEventListener('click', () => handleAnswer(optText));
-    quizOptions.appendChild(btn);
-  });
-}
-
-function handleAnswer(answer) {
-  userAnswers.push({
-    q: questions[currentQuestion].q,
-    scenario: questions[currentQuestion].scenario,
-    a: answer
-  });
-
-  currentQuestion++;
-  if (currentQuestion < questions.length) {
-    showQuestion();
-  } else {
-    showQuizEnding();
-  }
-}
-
-function showQuizEnding() {
-  quizSection.style.display = 'none';
-  ending.style.display = 'block';
-  endingTitle.textContent = 'ขอบคุณสำหรับความใส่ใจและทุกคำตอบนะ ♡';
-  endingText.textContent = 'การได้เข้าใจมุมมองของคุณในเรื่องเหล่านี้มีความหมายกับเรามาก นี่คือสรุปแนวทางที่เราได้เรียนรู้ร่วมกัน:';
-  
-  summaryAnswers.style.display = 'block';
-  summaryAnswers.innerHTML = userAnswers.map((item, idx) => `
-    <div style="margin-bottom: 16px;">
-      <strong style="color: var(--wine);">${idx + 1}. ${item.q}</strong><br>
-      <span style="font-size: 13px; color: #7a5260; display: block; margin: 2px 0 6px;">"${item.scenario}"</span>
-      <span style="color: var(--rose); font-weight: bold;">↳ มุมมองของคุณ: ${item.a}</span>
-    </div>
-  `).join('');
-}
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  dodges = 0;
-  ending.style.display = 'none';
-  quizSection.style.display = 'none';
-  initialSection.style.display = 'block';
-  
-  noBtn.style.visibility = 'visible';
-  noBtn.style.transform = 'none';
-  status.textContent = '';
-  
-  envelope.classList.remove('open');
-  letter.classList.remove('show');
-  openBtn.textContent = 'เปิดจดหมาย ♡';
-});
-</script>
-</body>
-</html>
+    q: "กรณีศึกษาที่ 3: การสนับสนุนเป้าหมายชีวิต",
+    scenario: "หากในอนาคตฝ่ายใด
