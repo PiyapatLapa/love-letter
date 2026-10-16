@@ -1,97 +1,273 @@
 
-<div class="choice-area" id="choiceArea">
-  <button id="yesBtn">ลองคุยกันดู ❤️</button>
-  <button id="noBtn">ไม่เอา 😏</button>
-</div>
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Letter For You ♡</title>
 <style>
-.choice-area {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  min-height: 180px;
-  overflow: hidden;
+:root {
+  --cream:#fff8ee;
+  --pink:#f4dce1;
+  --rose:#bd7185;
+  --wine:#762e45;
+  --ink:#513541;
 }
-
-.choice-area button {
-  padding: 12px 18px;
-  border-radius: 24px;
-  border: 1px solid #793d4b;
-  cursor: pointer;
-  touch-action: manipulation;
+* { box-sizing:border-box; }
+body {
+  margin:0; min-height:100vh;
+  background:linear-gradient(145deg,var(--cream),var(--pink));
+  color:var(--ink);
+  font-family:Georgia,"Tahoma",serif;
+  text-align:center;
+  overflow-x:hidden;
 }
-
-#yesBtn {
-  background: #793d4b;
-  color: white;
+main {
+  width:min(92%,650px);
+  margin:auto;
+  padding:38px 0 65px;
 }
-
-#noBtn {
-  background: #fffaf4;
-  color: #793d4b;
-  transition: left .18s ease, top .18s ease;
+h1 { color:var(--wine); font-size:clamp(27px,6vw,42px); }
+p { line-height:1.9; }
+.small { font-size:13px; opacity:.72; }
+button {
+  border:0; border-radius:30px;
+  padding:12px 20px; margin:6px;
+  background:var(--wine); color:white;
+  font-size:15px; cursor:pointer;
+  transition:transform .2s;
 }
-
-#noBtn.running {
-  position: absolute;
+button:active { transform:scale(.96); }
+button.secondary { background:#ead0d5; color:var(--wine); }
+.envelope-wrap { perspective:900px; margin:35px auto; }
+.envelope {
+  position:relative; width:min(100%,330px); height:205px;
+  margin:auto; cursor:pointer;
+  background:#dcaab4; border-radius:8px;
+  box-shadow:0 12px 28px #762e4520;
 }
+.envelope:before {
+  content:""; position:absolute; inset:0;
+  background:#e8bdc6;
+  clip-path:polygon(0 0,50% 58%,100% 0);
+  transform-origin:top; transition:transform .8s; z-index:3;
+}
+.envelope:after {
+  content:""; position:absolute; inset:0;
+  background:#cf8f9f;
+  clip-path:polygon(0 100%,0 0,50% 57%,100% 0,100% 100%);
+  border-radius:8px;
+}
+.seal {
+  position:absolute; z-index:4; left:50%; top:53%;
+  transform:translate(-50%,-50%);
+  width:48px;height:48px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--wine);color:white;font-size:23px;
+}
+.envelope.open:before { transform:rotateX(180deg); }
+.envelope.open .seal { opacity:0; }
+.letter {
+  display:none; position:relative; z-index:2;
+  background:#fffdf8; padding:25px 22px;
+  margin:18px auto; border:1px solid #e8cbd0;
+  border-radius:12px; box-shadow:0 10px 25px #762e4512;
+  text-align:left; animation:appear .8s ease;
+}
+.letter.show { display:block; }
+.letter h2 { text-align:center; color:var(--wine); }
+#letterText { white-space:pre-wrap; }
+@keyframes appear {
+  from {opacity:0;transform:translateY(15px)}
+  to {opacity:1;transform:translateY(0)}
+}
+.section {
+  margin-top:25px; padding:22px;
+  border:1px solid #e7cbd1; border-radius:18px;
+  background:#fff9f3b8;
+}
+#noBtn { background:#d7a3ae; color:#54283a; }
+#status { min-height:30px; color:var(--wine); }
+#ending { display:none; }
+#ending.show { display:block; animation:appear .8s; }
+.sparkle {
+  position:fixed; pointer-events:none; z-index:99;
+  animation:floatUp 1s ease-out forwards;
+}
+@keyframes floatUp {
+  from {opacity:1;transform:translateY(0) scale(.6)}
+  to {opacity:0;transform:translateY(-90px) scale(1.5)}
+}
+footer { margin-top:35px; font-size:12px; opacity:.65; }
 </style>
+</head>
+<body>
+<main>
+  <p>♡ a little letter for someone special ♡</p>
+  <h1>ถึงคนคนหนึ่ง</h1>
+  <p>มีบางอย่างที่อยากบอก เลยทำเว็บนี้ขึ้นมา</p>
+
+  <div class="envelope-wrap">
+    <div class="envelope" id="envelope" role="button"
+         tabindex="0" aria-label="เปิดซองจดหมาย">
+      <div class="seal">♡</div>
+    </div>
+  </div>
+  <button id="openBtn">เปิดจดหมาย ♡</button>
+  <button class="secondary" id="musicBtn">♫ เพลง: ปิดอยู่</button>
+  <audio id="music" loop></audio>
+  <p class="small">แตะซองจดหมายเพื่อเปิดอ่าน</p>
+
+  <article class="letter" id="letter">
+    <h2>Dear you, ♡</h2>
+    <p id="letterText">[เขียนคำทักทายของคุณตรงนี้]
+
+[เขียนสิ่งที่คุณอยากบอกเขาด้วยคำพูดของตัวเอง]
+
+[เขียนความรู้สึกหรือสิ่งที่คุณได้เรียนรู้จากที่ผ่านมา]
+
+[เขียนว่าคุณอยากสร้างอนาคตแบบไหน หากเขาอยากลองเปิดโอกาสให้กันอีกครั้ง]
+
+ไม่ว่าคำตอบจะเป็นอย่างไร เราก็อยากเคารพความรู้สึกของคุณ
+
+ด้วยความรู้สึกดี ๆ ♡</p>
+  </article>
+
+  <section class="section">
+    <h2>มีคำถามอยากถามหน่อย ♡</h2>
+    <p>ถ้าคุณอ่านมาถึงตรงนี้แล้ว...</p>
+    <p>คุณอยากลองเปิดโอกาสให้เราได้รู้จักกันใหม่ไหม?</p>
+    <div id="choiceArea">
+      <button id="yesBtn">ลองดูกัน ♡</button>
+      <button class="secondary" id="noBtn">ยังไม่แน่ใจ</button>
+    </div>
+    <p id="status" aria-live="polite"></p>
+    <div id="ending">
+      <h2 id="endingTitle"></h2>
+      <p id="endingText"></p>
+      <button id="resetBtn" class="secondary">เล่นมุกใหม่อีกครั้ง</button>
+    </div>
+  </section>
+  <footer>made with care ♡</footer>
+</main>
 
 <script>
-const area = document.getElementById("choiceArea");
-const noBtn = document.getElementById("noBtn");
+const envelope = document.getElementById('envelope');
+const letter = document.getElementById('letter');
+const openBtn = document.getElementById('openBtn');
+const music = document.getElementById('music');
+const musicBtn = document.getElementById('musicBtn');
+const noBtn = document.getElementById('noBtn');
+const yesBtn = document.getElementById('yesBtn');
+const status = document.getElementById('status');
+const ending = document.getElementById('ending');
+const endingTitle = document.getElementById('endingTitle');
+const endingText = document.getElementById('endingText');
 
-let stage = 0;
-let count = 0;
-let lastMove = 0;
-
-function moveButton() {
-  const now = Date.now();
-
-  // ป้องกันมือถือเรียกเหตุการณ์ซ้ำติดกัน
-  if (now - lastMove < 180) return;
-  lastMove = now;
-
-  noBtn.classList.add("running");
-
-  const maxX = Math.max(0, area.clientWidth - noBtn.offsetWidth);
-  const maxY = Math.max(0, area.clientHeight - noBtn.offsetHeight);
-
-  noBtn.style.left = Math.random() * maxX + "px";
-  noBtn.style.top = Math.random() * maxY + "px";
-
-  count++;
-
-  if (stage === 0 && count >= 20) {
-    stage = 1;
-    count = 0;
-    noBtn.textContent = "ยังไม่เอา! 😂";
-  } else if (stage === 1 && count >= 10) {
-    stage = 2;
-    count = 0;
-    noBtn.textContent = "ไม่จริง ๆ 😭";
-  } else if (stage === 2 && count >= 3) {
-    noBtn.removeEventListener("pointerenter", onHover);
-    noBtn.removeEventListener("pointerdown", onTouch);
-    noBtn.textContent = "โอเค เราเคารพคำตอบนะ ❤️";
-    noBtn.style.position = "static";
-    noBtn.classList.remove("running");
+function openLetter() {
+  envelope.classList.add('open');
+  letter.classList.add('show');
+  openBtn.textContent = 'เปิดจดหมายแล้ว ♡';
+}
+openBtn.addEventListener('click', openLetter);
+envelope.addEventListener('click', openLetter);
+envelope.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openLetter();
   }
-}
+});
 
-function onHover(event) {
-  if (event.pointerType === "mouse") moveButton();
-}
-
-function onTouch(event) {
-  if (event.pointerType === "touch") {
-    event.preventDefault();
-    moveButton();
+// ใส่ไฟล์เพลงที่คุณมีสิทธิ์ใช้งาน แล้วเปลี่ยนชื่อไฟล์ตรงนี้
+// ตัวอย่าง: music.src = "piano.mp3";
+musicBtn.addEventListener('click', async () => {
+  if (!music.src) {
+    status.textContent = '♫ อยากใส่เพลง? เพิ่มไฟล์เพลงแล้วกำหนด music.src ในโค้ดได้เลย';
+    return;
   }
-}
+  if (music.paused) {
+    try {
+      await music.play();
+      musicBtn.textContent = '♫ เพลง: เปิดอยู่';
+    } catch {
+      status.textContent = 'เบราว์เซอร์ยังไม่อนุญาตให้เล่นเพลง ลองแตะอีกครั้งนะ';
+    }
+  } else {
+    music.pause();
+    musicBtn.textContent = '♫ เพลง: ปิดอยู่';
+  }
+});
 
-noBtn.addEventListener("pointerenter", onHover);
-noBtn.addEventListener("pointerdown", onTouch);
+// ประกายดาวเมื่อแตะหน้าจอ
+document.addEventListener('pointerdown', e => {
+  const s = document.createElement('span');
+  s.className = 'sparkle';
+  s.textContent = ['✦','♡','✧','⋆'][Math.floor(Math.random()*4)];
+  s.style.left = e.clientX + 'px';
+  s.style.top = e.clientY + 'px';
+  s.style.fontSize = (14 + Math.random()*16) + 'px';
+  s.style.color = '#a54e6a';
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 1100);
+});
+
+// ปุ่มหนี: 20 -> 10 -> 3 -> ฉากจบกวน ๆ
+let dodges = 0;
+let stage = 20;
+const messages = {
+  20: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
+  10: 'ยังจะกดอีกเหรอครับบบ 😂',
+  3: 'เหลืออีกนิดเดียวเองนะะะ',
+};
+function moveNoButton() {
+  if (ending.classList.contains('show')) return;
+  dodges++;
+
+  if (dodges === 20) stage = 10;
+  if (dodges === 30) stage = 3;
+
+  if (dodges >= 33) {
+    ending.classList.add('show');
+    endingTitle.textContent = 'โดนปุ่มหลอกแล้ววว 😈';
+    endingText.textContent =
+      '555555 ปุ่มนี้กวนเล่นเฉย ๆ ครับ ไม่มีคำตอบไหนผิดนะ คุณเลือกตามความรู้สึกจริง ๆ ได้เลย ♡';
+    status.textContent = '';
+    noBtn.style.visibility = 'hidden';
+    return;
+  }
+
+  status.textContent =
+    dodges < 20 ? messages[20] :
+    dodges < 30 ? messages[10] : messages[3];
+
+  const area = document.getElementById('choiceArea');
+  const maxX = Math.max(0, Math.min(150, area.clientWidth / 2));
+  const maxY = 70;
+  const x = (Math.random() * 2 - 1) * maxX;
+  const y = (Math.random() * 2 - 1) * maxY;
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+}
+noBtn.addEventListener('pointerenter', moveNoButton);
+noBtn.addEventListener('click', moveNoButton);
+
+yesBtn.addEventListener('click', () => {
+  ending.classList.add('show');
+  endingTitle.textContent = 'ขอบคุณที่อ่านจนจบนะ ♡';
+  endingText.textContent =
+    'ไม่ว่าจะเป็นคำตอบแบบไหน ขอบคุณที่ให้เวลามาอ่านจดหมายฉบับนี้ คุณไม่จำเป็นต้องรีบตัดสินใจเลย';
+  noBtn.style.visibility = 'visible';
+  noBtn.style.transform = 'none';
+  status.textContent = '';
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  dodges = 0;
+  stage = 20;
+  ending.classList.remove('show');
+  noBtn.style.visibility = 'visible';
+  noBtn.style.transform = 'none';
+  status.textContent = '';
+});
 </script>
+</body>
+</html>
