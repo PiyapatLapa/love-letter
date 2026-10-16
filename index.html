@@ -105,23 +105,43 @@ button.secondary { background:#ead0d5; color:var(--wine); }
 }
 #status { min-height:30px; color:var(--wine); font-weight: bold; }
 
-/* โครงสร้างส่วนคำถาม (Quiz Section) */
+/* โครงสร้างส่วนคำถามเชิงลึก (Deep Quiz Section) */
 #quizSection {
   display: none;
   text-align: center;
   animation: appear .6s ease;
 }
 #quizSection.show { display: block; }
+.scenario-box {
+  background: #ffffff;
+  border-left: 4px solid var(--rose);
+  padding: 14px 18px;
+  margin: 15px 0 20px;
+  text-align: left;
+  border-radius: 0 12px 12px 0;
+  font-size: 14.5px;
+  color: #643949;
+  box-shadow: 0 4px 12px #762e450a;
+}
+.scenario-title {
+  font-weight: bold;
+  color: var(--wine);
+  margin-bottom: 6px;
+  display: block;
+}
 .quiz-option {
   display: block;
   width: 100%;
-  max-width: 320px;
+  max-width: 420px;
   margin: 10px auto;
   background: #fff;
   border: 1px solid var(--rose);
   color: var(--wine);
-  font-size: 16px;
+  font-size: 15px;
   padding: 12px 18px;
+  line-height: 1.5;
+  text-align: left;
+  border-radius: 20px;
 }
 .quiz-option:hover {
   background: var(--wine);
@@ -155,258 +175,4 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
   <p>มีบางอย่างที่อยากบอก เลยทำเว็บนี้ขึ้นมา</p>
 
   <div class="envelope-wrap">
-    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="เปิดซองจดหมาย">
-      <div class="seal">♡</div>
-    </div>
-  </div>
-  <button id="openBtn">เปิดจดหมาย ♡</button>
-  <button class="secondary" id="musicBtn">♫ เพลง: ปิดอยู่</button>
-  <audio id="music" loop></audio>
-  <p class="small">แตะซองจดหมายเพื่อเปิดอ่าน</p>
-
-  <article class="letter" id="letter">
-    <h2>Dear you, ♡</h2>
-    <p id="letterText">[เขียนคำทักทายของคุณตรงนี้]
-
-[เขียนสิ่งที่คุณอยากบอกเขาด้วยคำพูดของตัวเอง]
-
-[เขียนความรู้สึกหรือสิ่งที่คุณได้เรียนรู้จากที่ผ่านมา]
-
-[เขียนว่าคุณอยากสร้างอนาคตแบบไหน หากเขาอยากลองเปิดโอกาสให้กันอีกครั้ง]
-
-ไม่ว่าคำตอบจะเป็นอย่างไร เราก็อยากเคารพความรู้สึกของคุณ
-
-ด้วยความรู้สึกดี ๆ ♡</p>
-  </article>
-
-  <!-- ส่วนคำถามแรกเริ่ม -->
-  <section class="section" id="initialSection">
-    <h2>มีคำถามอยากถามหน่อย ♡</h2>
-    <p>ถ้าคุณอ่านมาถึงตรงนี้แล้ว...</p>
-    <p>คุณอยากลองเปิดโอกาสให้เราได้รู้จักกันใหม่ไหม?</p>
-    <div id="choiceArea">
-      <button id="yesBtn">ลองดูกัน ♡</button>
-      <button class="secondary" id="noBtn">ยังไม่แน่ใจ</button>
-    </div>
-    <p id="status" aria-live="polite"></p>
-  </section>
-
-  <!-- ส่วนคำถามตอบ (Quiz Section) -->
-  <section class="section" id="quizSection">
-    <div class="progress-bar" id="quizProgress">คำถามที่ 1 / 3</div>
-    <h2 id="quizQuestion">ข้อความคำถาม</h2>
-    <div id="quizOptions"></div>
-  </section>
-
-  <!-- ส่วนฉากจบ -->
-  <section class="section" id="ending">
-    <h2 id="endingTitle"></h2>
-    <p id="endingText"></p>
-    <div id="summaryAnswers" style="text-align: left; background: #fff; padding: 15px; border-radius: 12px; margin: 15px 0; font-size: 14px; border: 1px solid #e8cbd0;"></div>
-    <button id="resetBtn" class="secondary">เริ่มใหม่อีกครั้ง</button>
-  </section>
-
-  <footer>made with care ♡</footer>
-</main>
-
-<script>
-const envelope = document.getElementById('envelope');
-const letter = document.getElementById('letter');
-const openBtn = document.getElementById('openBtn');
-const music = document.getElementById('music');
-const musicBtn = document.getElementById('musicBtn');
-const noBtn = document.getElementById('noBtn');
-const yesBtn = document.getElementById('yesBtn');
-const status = document.getElementById('status');
-const initialSection = document.getElementById('initialSection');
-const quizSection = document.getElementById('quizSection');
-const quizProgress = document.getElementById('quizProgress');
-const quizQuestion = document.getElementById('quizQuestion');
-const quizOptions = document.getElementById('quizOptions');
-const ending = document.getElementById('ending');
-const endingTitle = document.getElementById('endingTitle');
-const endingText = document.getElementById('endingText');
-const summaryAnswers = document.getElementById('summaryAnswers');
-
-// ชุดคำถามที่สามารถแก้ไขปรับแต่งได้ตามใจชอบ
-const questions = [
-  {
-    q: "ถ้าเราจะเริ่มต้นคุยกันใหม่ อยากให้เริ่มจากตรงไหนดี?",
-    options: [
-      "ค่อยๆ คุยกันทีละนิด ไม่ต้องรีบ",
-      "ไปหาน้ำดื่ม/ทานข้าวด้วยกันสักมื้อ",
-      "ส่งข้อความทักทายกันทุกวันเหมือนเดิม"
-    ]
-  },
-  {
-    q: "ถ้ามีเวลาว่างตรงกัน อยากทำกิจกรรมอะไรด้วยกันมากที่สุด?",
-    options: [
-      "นั่งคาเฟ่ชิวๆ หาขนมอร่อยทาน",
-      "เดินเล่นสวนสาธารณะ / ดูหนังเรื่องโปรด",
-      "ไปเที่ยวต่างจังหวัดเปลี่ยนบรรยากาศ"
-    ]
-  },
-  {
-    q: "สุดท้ายนี้... สิ่งที่คุณอยากบอกเรามากที่สุดคืออะไร?",
-    options: [
-      "ขอบคุณสำหรับความรู้สึกดีๆ นะ",
-      "ดีใจนะที่ทำเว็บนี้ขึ้นมาให้ดู",
-      "มาพยายามไปด้วยกันใหม่อีกครั้งนะ ♡"
-    ]
-  }
-];
-
-let currentQuestion = 0;
-let userAnswers = [];
-
-function openLetter() {
-  envelope.classList.add('open');
-  letter.classList.add('show');
-  openBtn.textContent = 'เปิดจดหมายแล้ว ♡';
-}
-openBtn.addEventListener('click', openLetter);
-envelope.addEventListener('click', openLetter);
-envelope.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    openLetter();
-  }
-});
-
-musicBtn.addEventListener('click', async () => {
-  if (!music.src) {
-    status.textContent = '♫ อยากใส่เพลง? เพิ่มไฟล์เพลงแล้วกำหนด music.src ในโค้ดได้เลย';
-    return;
-  }
-  if (music.paused) {
-    try {
-      await music.play();
-      musicBtn.textContent = '♫ เพลง: เปิดอยู่';
-    } catch {
-      status.textContent = 'เบราว์เซอร์ยังไม่อนุญาตให้เล่นเพลง ลองแตะอีกครั้งนะ';
-    }
-  } else {
-    music.pause();
-    musicBtn.textContent = '♫ เพลง: ปิดอยู่';
-  }
-});
-
-// ประกายดาว
-document.addEventListener('pointerdown', e => {
-  const s = document.createElement('span');
-  s.className = 'sparkle';
-  s.textContent = ['✦','♡','✧','⋆'][Math.floor(Math.random()*4)];
-  s.style.left = e.clientX + 'px';
-  s.style.top = e.clientY + 'px';
-  s.style.fontSize = (14 + Math.random()*16) + 'px';
-  s.style.color = '#a54e6a';
-  document.body.appendChild(s);
-  setTimeout(() => s.remove(), 1100);
-});
-
-// ปุ่มหนี
-let dodges = 0;
-const messages = {
-  1: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
-  10: 'ยังจะกดอีกเหรอครับบบ 😂',
-  25: 'เหลืออีกนิดเดียวเองนะะะ',
-};
-
-function moveNoButton(e) {
-  if (ending.style.display === 'block') return;
-  if (e) e.preventDefault();
-
-  dodges++;
-
-  if (dodges >= 33) {
-    initialSection.style.display = 'none';
-    ending.classList.add('show');
-    endingTitle.textContent = 'โดนปุ่มหลอกแล้ววว 😈';
-    endingText.textContent =
-      '555555 ปุ่มนี้กวนเล่นเฉย ๆ ครับ ไม่มีคำตอบไหนผิดนะ คุณเลือกตามความรู้สึกจริง ๆ ได้เลย ♡';
-    summaryAnswers.style.display = 'none';
-    return;
-  }
-
-  if (dodges >= 25) status.textContent = messages[25];
-  else if (dodges >= 10) status.textContent = messages[10];
-  else status.textContent = messages[1];
-
-  const offsetX = (Math.random() - 0.5) * 220;
-  const offsetY = (Math.random() - 0.5) * 100;
-  noBtn.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-}
-
-noBtn.addEventListener('mouseover', moveNoButton);
-noBtn.addEventListener('touchstart', moveNoButton, { passive: false });
-
-// เริ่มคำถามเมื่อกด "ลองดูกัน ♡"
-yesBtn.addEventListener('click', () => {
-  initialSection.style.display = 'none';
-  quizSection.classList.add('show');
-  currentQuestion = 0;
-  userAnswers = [];
-  showQuestion();
-});
-
-function showQuestion() {
-  const qData = questions[currentQuestion];
-  quizProgress.textContent = `คำถามที่ ${currentQuestion + 1} / ${questions.length}`;
-  quizQuestion.textContent = qData.q;
-  quizOptions.innerHTML = '';
-
-  qData.options.forEach((optText) => {
-    const btn = document.createElement('button');
-    btn.className = 'quiz-option';
-    btn.textContent = optText;
-    btn.addEventListener('click', () => handleAnswer(optText));
-    quizOptions.appendChild(btn);
-  });
-}
-
-function handleAnswer(answer) {
-  userAnswers.push({
-    q: questions[currentQuestion].q,
-    a: answer
-  });
-
-  currentQuestion++;
-  if (currentQuestion < questions.length) {
-    showQuestion();
-  } else {
-    showQuizEnding();
-  }
-}
-
-function showQuizEnding() {
-  quizSection.classList.remove('show');
-  ending.classList.add('show');
-  endingTitle.textContent = 'ขอบคุณสำหรับทุกคำตอบนะ ♡';
-  endingText.textContent = 'เราดีใจมากๆ ที่ได้รู้ความคิดของคุณ สรุปสิ่งที่คุณเลือกไว้ตามนี้เลย:';
-  
-  summaryAnswers.style.display = 'block';
-  summaryAnswers.innerHTML = userAnswers.map((item, idx) => `
-    <p style="margin: 8px 0;">
-      <strong>${idx + 1}. ${item.q}</strong><br>
-      <span style="color: var(--rose); font-weight: bold;">↳ ตอบ: ${item.a}</span>
-    </p>
-  `).join('');
-}
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  dodges = 0;
-  ending.classList.remove('show');
-  quizSection.classList.remove('show');
-  initialSection.style.display = 'block';
-  
-  noBtn.style.visibility = 'visible';
-  noBtn.style.transform = 'none';
-  status.textContent = '';
-  
-  envelope.classList.remove('open');
-  letter.classList.remove('show');
-  openBtn.textContent = 'เปิดจดหมาย ♡';
-});
-</script>
-</body>
-</html>
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="เปิดซอง
