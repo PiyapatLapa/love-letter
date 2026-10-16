@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -18,7 +17,7 @@ body {
   margin:0; min-height:100vh;
   background:linear-gradient(145deg,var(--cream),var(--pink));
   color:var(--ink);
-  font-family:Georgia,"Tahoma",serif;
+  font-family:Georgia, "Tahoma", serif;
   text-align:center;
   overflow-x:hidden;
 }
@@ -35,10 +34,11 @@ button {
   padding:12px 20px; margin:6px;
   background:var(--wine); color:white;
   font-size:15px; cursor:pointer;
-  transition:transform .2s;
+  transition:transform .2s ease, background .2s ease;
 }
 button:active { transform:scale(.96); }
 button.secondary { background:#ead0d5; color:var(--wine); }
+
 .envelope-wrap { perspective:900px; margin:35px auto; }
 .envelope {
   position:relative; width:min(100%,330px); height:205px;
@@ -64,9 +64,11 @@ button.secondary { background:#ead0d5; color:var(--wine); }
   width:48px;height:48px;border-radius:50%;
   display:grid;place-items:center;
   background:var(--wine);color:white;font-size:23px;
+  transition:opacity .4s ease;
 }
 .envelope.open:before { transform:rotateX(180deg); }
 .envelope.open .seal { opacity:0; }
+
 .letter {
   display:none; position:relative; z-index:2;
   background:#fffdf8; padding:25px 22px;
@@ -77,19 +79,64 @@ button.secondary { background:#ead0d5; color:var(--wine); }
 .letter.show { display:block; }
 .letter h2 { text-align:center; color:var(--wine); }
 #letterText { white-space:pre-wrap; }
+
 @keyframes appear {
   from {opacity:0;transform:translateY(15px)}
   to {opacity:1;transform:translateY(0)}
 }
+
 .section {
   margin-top:25px; padding:22px;
   border:1px solid #e7cbd1; border-radius:18px;
   background:#fff9f3b8;
 }
-#noBtn { background:#d7a3ae; color:#54283a; }
-#status { min-height:30px; color:var(--wine); }
+#choiceArea {
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+#noBtn { 
+  background:#d7a3ae; color:#54283a; 
+  position: relative;
+  transition: transform 0.2s ease-out;
+}
+#status { min-height:30px; color:var(--wine); font-weight: bold; }
+
+/* โครงสร้างส่วนคำถาม (Quiz Section) */
+#quizSection {
+  display: none;
+  text-align: center;
+  animation: appear .6s ease;
+}
+#quizSection.show { display: block; }
+.quiz-option {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 10px auto;
+  background: #fff;
+  border: 1px solid var(--rose);
+  color: var(--wine);
+  font-size: 16px;
+  padding: 12px 18px;
+}
+.quiz-option:hover {
+  background: var(--wine);
+  color: white;
+}
+.progress-bar {
+  font-size: 13px;
+  color: var(--rose);
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
 #ending { display:none; }
 #ending.show { display:block; animation:appear .8s; }
+
 .sparkle {
   position:fixed; pointer-events:none; z-index:99;
   animation:floatUp 1s ease-out forwards;
@@ -108,8 +155,7 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
   <p>มีบางอย่างที่อยากบอก เลยทำเว็บนี้ขึ้นมา</p>
 
   <div class="envelope-wrap">
-    <div class="envelope" id="envelope" role="button"
-         tabindex="0" aria-label="เปิดซองจดหมาย">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="เปิดซองจดหมาย">
       <div class="seal">♡</div>
     </div>
   </div>
@@ -133,7 +179,8 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
 ด้วยความรู้สึกดี ๆ ♡</p>
   </article>
 
-  <section class="section">
+  <!-- ส่วนคำถามแรกเริ่ม -->
+  <section class="section" id="initialSection">
     <h2>มีคำถามอยากถามหน่อย ♡</h2>
     <p>ถ้าคุณอ่านมาถึงตรงนี้แล้ว...</p>
     <p>คุณอยากลองเปิดโอกาสให้เราได้รู้จักกันใหม่ไหม?</p>
@@ -142,12 +189,23 @@ footer { margin-top:35px; font-size:12px; opacity:.65; }
       <button class="secondary" id="noBtn">ยังไม่แน่ใจ</button>
     </div>
     <p id="status" aria-live="polite"></p>
-    <div id="ending">
-      <h2 id="endingTitle"></h2>
-      <p id="endingText"></p>
-      <button id="resetBtn" class="secondary">เล่นมุกใหม่อีกครั้ง</button>
-    </div>
   </section>
+
+  <!-- ส่วนคำถามตอบ (Quiz Section) -->
+  <section class="section" id="quizSection">
+    <div class="progress-bar" id="quizProgress">คำถามที่ 1 / 3</div>
+    <h2 id="quizQuestion">ข้อความคำถาม</h2>
+    <div id="quizOptions"></div>
+  </section>
+
+  <!-- ส่วนฉากจบ -->
+  <section class="section" id="ending">
+    <h2 id="endingTitle"></h2>
+    <p id="endingText"></p>
+    <div id="summaryAnswers" style="text-align: left; background: #fff; padding: 15px; border-radius: 12px; margin: 15px 0; font-size: 14px; border: 1px solid #e8cbd0;"></div>
+    <button id="resetBtn" class="secondary">เริ่มใหม่อีกครั้ง</button>
+  </section>
+
   <footer>made with care ♡</footer>
 </main>
 
@@ -160,9 +218,46 @@ const musicBtn = document.getElementById('musicBtn');
 const noBtn = document.getElementById('noBtn');
 const yesBtn = document.getElementById('yesBtn');
 const status = document.getElementById('status');
+const initialSection = document.getElementById('initialSection');
+const quizSection = document.getElementById('quizSection');
+const quizProgress = document.getElementById('quizProgress');
+const quizQuestion = document.getElementById('quizQuestion');
+const quizOptions = document.getElementById('quizOptions');
 const ending = document.getElementById('ending');
 const endingTitle = document.getElementById('endingTitle');
 const endingText = document.getElementById('endingText');
+const summaryAnswers = document.getElementById('summaryAnswers');
+
+// ชุดคำถามที่สามารถแก้ไขปรับแต่งได้ตามใจชอบ
+const questions = [
+  {
+    q: "ถ้าเราจะเริ่มต้นคุยกันใหม่ อยากให้เริ่มจากตรงไหนดี?",
+    options: [
+      "ค่อยๆ คุยกันทีละนิด ไม่ต้องรีบ",
+      "ไปหาน้ำดื่ม/ทานข้าวด้วยกันสักมื้อ",
+      "ส่งข้อความทักทายกันทุกวันเหมือนเดิม"
+    ]
+  },
+  {
+    q: "ถ้ามีเวลาว่างตรงกัน อยากทำกิจกรรมอะไรด้วยกันมากที่สุด?",
+    options: [
+      "นั่งคาเฟ่ชิวๆ หาขนมอร่อยทาน",
+      "เดินเล่นสวนสาธารณะ / ดูหนังเรื่องโปรด",
+      "ไปเที่ยวต่างจังหวัดเปลี่ยนบรรยากาศ"
+    ]
+  },
+  {
+    q: "สุดท้ายนี้... สิ่งที่คุณอยากบอกเรามากที่สุดคืออะไร?",
+    options: [
+      "ขอบคุณสำหรับความรู้สึกดีๆ นะ",
+      "ดีใจนะที่ทำเว็บนี้ขึ้นมาให้ดู",
+      "มาพยายามไปด้วยกันใหม่อีกครั้งนะ ♡"
+    ]
+  }
+];
+
+let currentQuestion = 0;
+let userAnswers = [];
 
 function openLetter() {
   envelope.classList.add('open');
@@ -178,8 +273,6 @@ envelope.addEventListener('keydown', e => {
   }
 });
 
-// ใส่ไฟล์เพลงที่คุณมีสิทธิ์ใช้งาน แล้วเปลี่ยนชื่อไฟล์ตรงนี้
-// ตัวอย่าง: music.src = "piano.mp3";
 musicBtn.addEventListener('click', async () => {
   if (!music.src) {
     status.textContent = '♫ อยากใส่เพลง? เพิ่มไฟล์เพลงแล้วกำหนด music.src ในโค้ดได้เลย';
@@ -198,7 +291,7 @@ musicBtn.addEventListener('click', async () => {
   }
 });
 
-// ประกายดาวเมื่อแตะหน้าจอ
+// ประกายดาว
 document.addEventListener('pointerdown', e => {
   const s = document.createElement('span');
   s.className = 'sparkle';
@@ -211,64 +304,109 @@ document.addEventListener('pointerdown', e => {
   setTimeout(() => s.remove(), 1100);
 });
 
-// ปุ่มหนี: 20 -> 10 -> 3 -> ฉากจบกวน ๆ
+// ปุ่มหนี
 let dodges = 0;
-let stage = 20;
 const messages = {
-  20: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
+  1: 'โอ๊ะ ปุ่มขยับได้ด้วยเหรอ 5555',
   10: 'ยังจะกดอีกเหรอครับบบ 😂',
-  3: 'เหลืออีกนิดเดียวเองนะะะ',
+  25: 'เหลืออีกนิดเดียวเองนะะะ',
 };
-function moveNoButton() {
-  if (ending.classList.contains('show')) return;
+
+function moveNoButton(e) {
+  if (ending.style.display === 'block') return;
+  if (e) e.preventDefault();
+
   dodges++;
 
-  if (dodges === 20) stage = 10;
-  if (dodges === 30) stage = 3;
-
   if (dodges >= 33) {
+    initialSection.style.display = 'none';
     ending.classList.add('show');
     endingTitle.textContent = 'โดนปุ่มหลอกแล้ววว 😈';
     endingText.textContent =
       '555555 ปุ่มนี้กวนเล่นเฉย ๆ ครับ ไม่มีคำตอบไหนผิดนะ คุณเลือกตามความรู้สึกจริง ๆ ได้เลย ♡';
-    status.textContent = '';
-    noBtn.style.visibility = 'hidden';
+    summaryAnswers.style.display = 'none';
     return;
   }
 
-  status.textContent =
-    dodges < 20 ? messages[20] :
-    dodges < 30 ? messages[10] : messages[3];
+  if (dodges >= 25) status.textContent = messages[25];
+  else if (dodges >= 10) status.textContent = messages[10];
+  else status.textContent = messages[1];
 
-  const area = document.getElementById('choiceArea');
-  const maxX = Math.max(0, Math.min(150, area.clientWidth / 2));
-  const maxY = 70;
-  const x = (Math.random() * 2 - 1) * maxX;
-  const y = (Math.random() * 2 - 1) * maxY;
-  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  const offsetX = (Math.random() - 0.5) * 220;
+  const offsetY = (Math.random() - 0.5) * 100;
+  noBtn.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
 }
-noBtn.addEventListener('pointerenter', moveNoButton);
-noBtn.addEventListener('click', moveNoButton);
 
+noBtn.addEventListener('mouseover', moveNoButton);
+noBtn.addEventListener('touchstart', moveNoButton, { passive: false });
+
+// เริ่มคำถามเมื่อกด "ลองดูกัน ♡"
 yesBtn.addEventListener('click', () => {
-  ending.classList.add('show');
-  endingTitle.textContent = 'ขอบคุณที่อ่านจนจบนะ ♡';
-  endingText.textContent =
-    'ไม่ว่าจะเป็นคำตอบแบบไหน ขอบคุณที่ให้เวลามาอ่านจดหมายฉบับนี้ คุณไม่จำเป็นต้องรีบตัดสินใจเลย';
-  noBtn.style.visibility = 'visible';
-  noBtn.style.transform = 'none';
-  status.textContent = '';
+  initialSection.style.display = 'none';
+  quizSection.classList.add('show');
+  currentQuestion = 0;
+  userAnswers = [];
+  showQuestion();
 });
+
+function showQuestion() {
+  const qData = questions[currentQuestion];
+  quizProgress.textContent = `คำถามที่ ${currentQuestion + 1} / ${questions.length}`;
+  quizQuestion.textContent = qData.q;
+  quizOptions.innerHTML = '';
+
+  qData.options.forEach((optText) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = optText;
+    btn.addEventListener('click', () => handleAnswer(optText));
+    quizOptions.appendChild(btn);
+  });
+}
+
+function handleAnswer(answer) {
+  userAnswers.push({
+    q: questions[currentQuestion].q,
+    a: answer
+  });
+
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    showQuestion();
+  } else {
+    showQuizEnding();
+  }
+}
+
+function showQuizEnding() {
+  quizSection.classList.remove('show');
+  ending.classList.add('show');
+  endingTitle.textContent = 'ขอบคุณสำหรับทุกคำตอบนะ ♡';
+  endingText.textContent = 'เราดีใจมากๆ ที่ได้รู้ความคิดของคุณ สรุปสิ่งที่คุณเลือกไว้ตามนี้เลย:';
+  
+  summaryAnswers.style.display = 'block';
+  summaryAnswers.innerHTML = userAnswers.map((item, idx) => `
+    <p style="margin: 8px 0;">
+      <strong>${idx + 1}. ${item.q}</strong><br>
+      <span style="color: var(--rose); font-weight: bold;">↳ ตอบ: ${item.a}</span>
+    </p>
+  `).join('');
+}
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   dodges = 0;
-  stage = 20;
   ending.classList.remove('show');
+  quizSection.classList.remove('show');
+  initialSection.style.display = 'block';
+  
   noBtn.style.visibility = 'visible';
   noBtn.style.transform = 'none';
   status.textContent = '';
+  
+  envelope.classList.remove('open');
+  letter.classList.remove('show');
+  openBtn.textContent = 'เปิดจดหมาย ♡';
 });
 </script>
 </body>
 </html>
-
